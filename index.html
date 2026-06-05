@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吸血鬼幸存者</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2c0a13, #1a060a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 900px;
+            height: 650px;
+            position: relative;
+        }
+        
+        /* 主菜单 */
+        #mainMenu {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+            backdrop-filter: blur(10px);
+            border: 2px solid #DC143C;
+        }
+        
+        .title {
+            font-size: 48px;
+            color: #FF0000;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(220, 20, 60, 0.7);
+            animation: glow 2s infinite alternate;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(220, 20, 60, 0.7); }
+            to { text-shadow: 0 0 20px rgba(220, 20, 60, 1), 0 0 30px rgba(220, 20, 60, 0.8); }
+        }
+        
+        .subtitle {
+            font-size: 22px;
+            color: #DDD;
+            margin-bottom: 40px;
+            max-width: 80%;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #DC143C, #B22222);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 15px;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.6);
+            background: linear-gradient(45deg, #B22222, #DC143C);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        /* 角色选择 */
+        #characterSelect {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+            backdrop-filter: blur(10px);
+            border: 2px solid #DC143C;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            color: #FF0000;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .section-subtitle {
+            font-size: 20px;
+            color: #DDD;
+            margin-bottom: 30px;
+        }
+        
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin: 20px 0;
+            width: 80%;
+        }
+        
+        .character-card {
+            background: linear-gradient(135deg, #2c0a13, #340a15);
+            border: 2px solid #555;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-5px);
+            border-color: #FF0000;
+            box-shadow: 0 10px 25px rgba(220, 20, 60, 0.3);
+        }
+        
+        .character-card.selected {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, #340a15, #2c0a13);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .character-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #8B0000, #A52A2A);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 3px solid #FFF;
+        }
+        
+        .character-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #FFF;
+        }
+        
+        .character-desc {
+            font-size: 14px;
+            color: #BBB;
+            margin-bottom: 15px;
+        }
+        
+        .character-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF0000;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #AAA;
+        }
+        
+        /* 游戏界面 */
+        #gameScreen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .player-info {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #AAA;
+        }
+        
+        .info-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #FF0000;
+        }
+        
+        .game-canvas-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        canvas {
+            display: block;
+            background: #111;
+        }
+        
+        .game-controls {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .back-btn {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(45deg, #d32f2f, #f44336);
+            transform: translateY(-2px);
+        }
+        
+        .selected-character-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .selected-icon {
+            font-size: 24px;
+        }
+        
+        .selected-name {
+            font-size: 18px;
+            color: #FFD700;
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #CCC;
+        }
+        
+        .level-up-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #FF0000;
+            text-align: center;
+            z-index: 100;
+            display: none;
+        }
+        
+        .upgrade-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .upgrade-option {
+            background: linear-gradient(135deg, #2c0a13, #340a15);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+        
+        .upgrade-option:hover {
+            background: linear-gradient(135deg, #340a15, #2c0a13);
+            transform: translateY(-3px);
+            border: 2px solid #FF0000;
+        }
+        
+        .character-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 20px;
+        }
+        
+        .preview-icon {
+            font-size: 60px;
+        }
+        
+        .preview-info {
+            text-align: left;
+        }
+        
+        .preview-name {
+            font-size: 28px;
+            color: #FF0000;
+            margin-bottom: 5px;
+        }
+        
+        .preview-desc {
+            font-size: 16px;
+            color: #DDD;
+            margin-bottom: 10px;
+        }
+        
+        .preview-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .preview-stat {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .preview-stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF0000;
+        }
+        
+        .preview-stat-label {
+            font-size: 14px;
+            color: #AAA;
+        }
+        
+        .confirm-btn {
+            background: linear-gradient(45deg, #DC143C, #B22222);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .confirm-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
+        }
+        
+        .confirm-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* 新增的UI元素 */
+        .health-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 10px;
+            z-index: 20;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: #FF0000;
+            border-radius: 8px;
+            transition: width 0.3s;
+        }
+        
+        .exp-bar-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: #000;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+        }
+        
+        .exp-bar {
+            height: 100%;
+            width: calc(100% - 150px);
+            background: #222;
+            border-right: 1px solid #333;
+        }
+        
+        .exp-fill {
+            height: 100%;
+            background: #4169E1;
+            transition: width 0.3s;
+        }
+        
+        .exp-text {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #4169E1;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0 10px;
+            border-left: 1px solid #333;
+        }
+        
+        .level-display {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFD700;
+            z-index: 20;
+        }
+        
+        .pause-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #FFD700;
+            z-index: 20;
+            cursor: pointer;
+            border: 1px solid #555;
+            transition: all 0.3s;
+        }
+        
+        .pause-button:hover {
+            background: rgba(50, 50, 50, 0.7);
+            transform: scale(1.1);
+        }
+        
+        .kill-count {
+            position: absolute;
+            top: 20px;
+            right: 180px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFD700;
+            z-index: 20;
+        }
+        
+        /* 主菜单按钮定位 */
+        .main-menu-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .main-menu-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+        
+        /* START按钮定位 */
+        .start-btn {
+            position: absolute;
+            top: 50%;
+            right: 50px;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-53px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
+        }
+        
+        .start-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: translateY(-50%);
+        }
+        
+        /* 结算画面 */
+        #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            text-align: center;
+        }
+        
+        .game-over-title {
+            font-size: 48px;
+            color: #FF0000;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(220, 20, 60, 0.7);
+        }
+        
+        .stats-container {
+            background: rgba(30, 10, 15, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            width: 80%;
+            max-width: 500px;
+            border: 2px solid #DC143C;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .stat-label {
+            font-size: 18px;
+            color: #DDD;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        
+        .achievements {
+            background: rgba(30, 10, 15, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            width: 80%;
+            max-width: 500px;
+            border: 2px solid #4CAF50;
+        }
+        
+        .achievement-title {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+        
+        .achievement-list {
+            text-align: left;
+        }
+        
+        .achievement-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .achievement-unlocked {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .achievement-locked {
+            color: #666;
+        }
+        
+        .game-over-btn {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .game-over-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.6);
+            background: linear-gradient(45deg, #d32f2f, #f44336);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主菜单 -->
+        <div id="mainMenu">
+            <h1 class="title">吸血鬼幸存者</h1>
+            <p class="subtitle">在黑暗世界中生存，击败成群的敌人！</p>
+            <button class="btn" onclick="showCharacterSelect()">选择角色</button>
+            <button class="btn" onclick="showInstructions()">游戏说明</button>
+        </div>
+        
+        <!-- 角色选择 -->
+        <div id="characterSelect">
+            <button class="main-menu-btn" onclick="goBackToMain()">主菜单</button>
+            
+            <h2 class="section-title">选择你的角色</h2>
+            <p class="section-subtitle">每个角色都有独特的生存技能</p>
+            
+            <div class="character-grid">
+                <div class="character-card" onclick="selectCharacter(0)">
+                    <div class="character-icon">🧛</div>
+                    <div class="character-name">吸血鬼</div>
+                    <div class="character-desc">通过战斗恢复生命</div>
+                    <div class="character-stats">
+                        <div class="stat">
+                            <div class="stat-value">10</div>
+                            <div class="stat-label">伤害</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">速度</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">120</div>
+                            <div class="stat-label">生命</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="character-card" onclick="selectCharacter(1)">
+                    <div class="character-icon">⚔️</div>
+                    <div class="character-name">战士</div>
+                    <div class="character-desc">近战专家</div>
+                    <div class="character-stats">
+                        <div class="stat">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">伤害</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">速度</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">100</div>
+                            <div class="stat-label">生命</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="character-card" onclick="selectCharacter(2)">
+                    <div class="character-icon">🏹</div>
+                    <div class="character-name">猎人</div>
+                    <div class="character-desc">远程攻击</div>
+                    <div class="character-stats">
+                        <div class="stat">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">伤害</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">6</div>
+                            <div class="stat-label">速度</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">80</div>
+                            <div class="stat-label">生命</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="character-card" onclick="selectCharacter(3)">
+                    <div class="character-icon">法师职业</div>
+                    <div class="character-name">法师</div>
+                    <div class="character-desc">魔法攻击</div>
+                    <div class="character-stats">
+                        <div class="stat">
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">伤害</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">速度</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">70</div>
+                            <div class="stat-label">生命</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="character-card" onclick="selectCharacter(4)">
+                    <div class="character-icon">道士职业</div>
+                    <div class="character-name">道士三峰</div>
+                    <div class="character-desc">手持桃木剑，召唤符咒进行远程攻击</div>
+                    <div class="character-stats">
+                        <div class="stat">
+                            <div class="stat-value">10</div>
+                            <div class="stat-label">伤害</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">速度</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">80</div>
+                            <div class="stat-label">生命</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="characterPreview" class="character-preview" style="display: none;">
+                <div class="preview-icon" id="previewIcon">🧛</div>
+                <div class="preview-info">
+                    <div class="preview-name" id="previewName">吸血鬼</div>
+                    <div class="preview-desc" id="previewDesc">通过战斗恢复生命</div>
+                    <div class="preview-stats">
+                        <div class="preview-stat">
+                            <div class="preview-stat-value" id="previewDamage">10</div>
+                            <div class="preview-stat-label">伤害</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value" id="previewSpeed">5</div>
+                            <div class="preview-stat-label">速度</div>
+                        </div>
+                        <div class="preview-stat">
+                            <div class="preview-stat-value" id="previewHealth">120</div>
+                            <div class="preview-stat-label">生命</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="start-btn" id="confirmSelectionBtn" onclick="confirmCharacterSelection()" disabled>START</button>
+        </div>
+        
+        <!-- 游戏界面 -->
+        <div id="gameScreen">
+            <!-- 经验条容器 -->
+            <div class="exp-bar-container">
+                <div class="exp-bar">
+                    <div class="exp-fill" id="expFill" style="width: 0%"></div>
+                </div>
+                <div class="exp-text" id="expText">0/100</div>
+            </div>
+            
+            <!-- 角色图标和名字 -->
+            <div class="selected-character-display">
+                <div class="selected-icon" id="gameIcon">🧛</div>
+                <div class="selected-name" id="gameName">吸血鬼</div>
+            </div>
+            
+            <!-- 杀敌数显示 -->
+            <div class="kill-count">
+                杀敌: <span id="killValue">0</span>
+            </div>
+            
+            <!-- 等级显示 -->
+            <div class="level-display">
+                等级: <span id="levelValue">1</span>
+            </div>
+            
+            <!-- 暂停按钮 -->
+            <div class="pause-button" id="pauseButton" onclick="togglePause()">⏸️</div>
+            
+            <!-- 生命条 - 在角色头顶 -->
+            <div class="health-bar" id="healthBar" style="top: 350px; left: 430px;">
+                <div class="health-fill" id="healthFill" style="width: 100%"></div>
+            </div>
+            
+            <div class="game-header" style="visibility: hidden;">
+                <div class="selected-character-display">
+                    <div class="selected-icon" id="gameIconHidden">🧛</div>
+                    <div class="selected-name" id="gameNameHidden">吸血鬼</div>
+                </div>
+                <div class="player-info">
+                    <div class="info-item">
+                        <div class="info-label">生命</div>
+                        <div class="info-value" id="healthValue">120</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">等级</div>
+                        <div class="info-value" id="levelValueHidden">1</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">经验</div>
+                        <div class="info-value" id="expValue">0/100</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">杀敌数</div>
+                        <div class="info-value" id="killValueHidden">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-canvas-container">
+                <canvas id="gameCanvas" width="860" height="500"></canvas>
+                <div class="instructions">
+                    使用 W/A/S/D 或方向键移动 | 鼠标控制射击方向
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button class="back-btn" onclick="goToCharacterSelect()">更换角色</button>
+                <button class="back-btn" onclick="goToMainMenu()">主菜单</button>
+            </div>
+            
+            <div id="levelUpModal" class="level-up-modal">
+                <h3>恭喜升级！选择属性提升</h3>
+                <div class="upgrade-options">
+                    <div class="upgrade-option" onclick="applyUpgrade('damage')">+5 伤害</div>
+                    <div class="upgrade-option" onclick="applyUpgrade('speed')">+1 移动速度</div>
+                    <div class="upgrade-option" onclick="applyUpgrade('health')">+20 最大生命</div>
+                </div>
+            </div>
+            
+            <!-- 结算画面 -->
+            <div id="gameOverScreen">
+                <h2 class="game-over-title">游戏结束</h2>
+                
+                <div class="stats-container">
+                    <div class="stat-row">
+                        <div class="stat-label">角色:</div>
+                        <div class="stat-value" id="finalCharacter">-</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">最终等级:</div>
+                        <div class="stat-value" id="finalLevel">-</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">杀敌总数:</div>
+                        <div class="stat-value" id="finalKills">-</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">存活时间:</div>
+                        <div class="stat-value" id="finalTime">-</div>
+                    </div>
+                </div>
+                
+                <div class="achievements">
+                    <h3 class="achievement-title">成就</h3>
+                    <div class="achievement-list">
+                        <div class="achievement-item">
+                            <span id="ach1" class="achievement-locked">初级战士: 达到5级</span>
+                        </div>
+                        <div class="achievement-item">
+                            <span id="ach2" class="achievement-locked">杀手: 击败100个敌人</span>
+                        </div>
+                        <div class="achievement-item">
+                            <span id="ach3" class="achievement-locked">生存专家: 生存10分钟</span>
+                        </div>
+                        <div class="achievement-item">
+                            <span id="ach4" class="achievement-locked">完美防御: 血量始终高于80%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="game-over-btn" onclick="goToMainMenu()">返回主菜单</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 角色数据
+        const characters = [
+            { name: "吸血鬼", icon: "🧛", desc: "通过战斗恢复生命", damage: 10, speed: 5, health: 120 },
+            { name: "战士", icon: "⚔️", desc: "近战专家", damage: 12, speed: 4, health: 100 },
+            { name: "猎人", icon: "🏹", desc: "远程攻击", damage: 8, speed: 6, health: 80 },
+            { name: "法师", icon: "法师职业", desc: "魔法攻击", damage: 15, speed: 4, health: 70 },
+            { 
+                name: "道士三峰", 
+                icon: "道士职业", 
+                desc: "手持桃木剑，召唤符咒进行远程攻击", 
+                damage: 10, 
+                speed: 4, 
+                health: 80 
+            }
+        ];
+        
+        let selectedCharacterIndex = -1;
+        let currentCharacter = null;
+        
+        // 游戏变量
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let player = { x: 430, y: 250, radius: 15, health: 120, maxHealth: 120, damage: 10, speed: 5 };
+        let bullets = [];
+        let enemies = [];
+        let particles = [];
+        let keys = {};
+        let mouseX = 430, mouseY = 250;
+        let lastShotTime = 0;
+        let enemySpawnTimer = 0;
+        let gameRunning = false;
+        let gamePaused = false;
+        let level = 1;
+        let exp = 0;
+        let expToNextLevel = 100;
+        let kills = 0;
+        let upgradeAvailable = false;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let perfectDefense = true;
+        
+        // 获取DOM元素
+        const healthBar = document.getElementById('healthBar');
+        const healthFill = document.getElementById('healthFill');
+        const expFill = document.getElementById('expFill');
+        const expText = document.getElementById('expText');
+        const levelDisplay = document.getElementById('levelValue');
+        const killDisplay = document.getElementById('killValue');
+        const pauseButton = document.getElementById('pauseButton');
+        
+        // 子弹类
+        class Bullet {
+            constructor(x, y, angle) {
+                this.x = x;
+                this.y = y;
+                this.radius = 3;
+                this.speed = 10;
+                this.dx = Math.cos(angle) * this.speed;
+                this.dy = Math.sin(angle) * this.speed;
+                this.damage = player.damage;
+            }
+            
+            update() {
+                this.x += this.dx;
+                this.y += this.dy;
+                
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFD700';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+        
+        // 敌人类
+        class Enemy {
+            constructor() {
+                const side = Math.floor(Math.random() * 4);
+                switch(side) {
+                    case 0:
+                        this.x = Math.random() * canvas.width;
+                        this.y = -20;
+                        break;
+                    case 1:
+                        this.x = canvas.width + 20;
+                        this.y = Math.random() * canvas.height;
+                        break;
+                    case 2:
+                        this.x = Math.random() * canvas.width;
+                        this.y = canvas.height + 20;
+                        break;
+                    case 3:
+                        this.x = -20;
+                        this.y = Math.random() * canvas.height;
+                        break;
+                }
+                
+                this.radius = 12 + Math.random() * 8;
+                this.speed = 1 + Math.random() * 1.5;
+                this.health = Math.floor(this.radius / 4);
+                this.maxHealth = this.health;
+                this.color = `hsl(${Math.random() * 60}, 70%, 50%)`;
+            }
+            
+            update() {
+                const dx = player.x - this.x;
+                const dy = player.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance > 0) {
+                    this.x += (dx / distance) * this.speed;
+                    this.y += (dy / distance) * this.speed;
+                }
+                
+                const distToPlayer = Math.sqrt((this.x - player.x) ** 2 + (this.y - player.y) ** 2);
+                if (distToPlayer < this.radius + player.radius) {
+                    player.health -= 0.5;
+                    if(player.health / player.maxHealth < 0.8) {
+                        perfectDefense = false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.strokeStyle = '#FFF';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.closePath();
+                
+                const barWidth = this.radius * 2;
+                const barHeight = 4;
+                const barX = this.x - this.radius;
+                const barY = this.y - this.radius - 10;
+                
+                ctx.fillStyle = '#333';
+                ctx.fillRect(barX, barY, barWidth, barHeight);
+                
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(barX, barY, barWidth * (this.health / this.maxHealth), barHeight);
+            }
+        }
+        
+        // 粒子类
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * 6 - 3;
+                this.color = color;
+                this.life = 30;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life--;
+                this.size *= 0.95;
+                return this.life > 0;
+            }
+            
+            draw() {
+                ctx.globalAlpha = this.life / 30;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+        
+        // 键盘事件
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+        
+        // 鼠标移动事件
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        });
+        
+        // 更新玩家位置
+        function updatePlayer() {
+            let moveX = 0;
+            let moveY = 0;
+            
+            if (keys['w'] || keys['arrowup']) moveY -= 1;
+            if (keys['s'] || keys['arrowdown']) moveY += 1;
+            if (keys['a'] || keys['arrowleft']) moveX -= 1;
+            if (keys['d'] || keys['arrowright']) moveX += 1;
+            
+            if (moveX !== 0 && moveY !== 0) {
+                moveX *= 0.707;
+                moveY *= 0.707;
+            }
+            
+            player.x += moveX * player.speed;
+            player.y += moveY * player.speed;
+            
+            player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
+            player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+        }
+        
+        // 更新游戏对象
+        function update() {
+            if (gamePaused || upgradeAvailable) return;
+            
+            updatePlayer();
+            
+            // 更新生命条位置 - 跟随玩家头顶
+            healthBar.style.top = (player.y - player.radius - 25) + 'px';
+            healthBar.style.left = (player.x - 100) + 'px';
+            
+            // 更新生命条填充
+            const healthPercentage = (player.health / player.maxHealth) * 100;
+            healthFill.style.width = healthPercentage + '%';
+            
+            // 更新子弹
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                if (!bullets[i].update()) {
+                    bullets.splice(i, 1);
+                }
+            }
+            
+            // 更新敌人
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                enemies[i].update();
+                
+                // 检查子弹与敌人碰撞
+                for (let j = bullets.length - 1; j >= 0; j--) {
+                    const dx = bullets[j].x - enemies[i].x;
+                    const dy = bullets[j].y - enemies[i].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < bullets[j].radius + enemies[i].radius) {
+                        enemies[i].health -= bullets[j].damage;
+                        bullets.splice(j, 1);
+                        
+                        if (enemies[i].health <= 0) {
+                            const expGain = Math.floor(enemies[i].radius / 2);
+                            exp += expGain;
+                            kills++;
+                            
+                            // 吸血鬼特殊能力：击败敌人后恢复生命
+                            if (currentCharacter.name === "吸血鬼") {
+                                player.health = Math.min(player.maxHealth, player.health + 5);
+                            }
+                            
+                            enemies.splice(i, 1);
+                            
+                            checkLevelUp();
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // 生成敌人
+            enemySpawnTimer++;
+            if (enemySpawnTimer > 60 - Math.min(level * 2, 40)) {
+                enemies.push(new Enemy());
+                enemySpawnTimer = 0;
+            }
+            
+            // 自动射击
+            const now = Date.now();
+            const shootDelay = 1000 / 5; // 固定射速
+            if (now - lastShotTime > shootDelay) {
+                const dx = mouseX - player.x;
+                const dy = mouseY - player.y;
+                const angle = Math.atan2(dy, dx);
+                
+                bullets.push(new Bullet(player.x, player.y, angle));
+                
+                lastShotTime = now;
+            }
+            
+            // 更新UI
+            levelDisplay.textContent = level;
+            killDisplay.textContent = kills;
+            
+            // 更新经验条和文字
+            const expPercentage = (exp / expToNextLevel) * 100;
+            expFill.style.width = expPercentage + '%';
+            expText.textContent = `${exp}/${expToNextLevel}`;
+            
+            // 检查游戏结束
+            if (player.health <= 0) {
+                gameOver();
+            }
+        }
+        
+        // 绘制游戏对象
+        function draw() {
+            // 清空画布
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制网格背景
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // 绘制玩家
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#4169E1'; // 道士三峰的深蓝色
+            ctx.fill();
+            ctx.strokeStyle = '#FFF';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+            
+            // 绘制瞄准线
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y);
+            ctx.lineTo(mouseX, mouseY);
+            ctx.strokeStyle = 'rgba(65, 105, 225, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.closePath();
+            
+            // 绘制子弹
+            bullets.forEach(bullet => bullet.draw());
+            
+            // 绘制敌人
+            enemies.forEach(enemy => enemy.draw());
+        }
+        
+        // 检查升级
+        function checkLevelUp() {
+            if (exp >= expToNextLevel) {
+                level++;
+                exp -= expToNextLevel;
+                expToNextLevel = Math.floor(expToNextLevel * 1.5);
+                showLevelUpModal();
+            }
+        }
+        
+        // 显示升级模态框
+        function showLevelUpModal() {
+            upgradeAvailable = true;
+            document.getElementById('levelUpModal').style.display = 'block';
+        }
+        
+        // 应用升级
+        function applyUpgrade(type) {
+            switch(type) {
+                case 'damage':
+                    player.damage += 5;
+                    break;
+                case 'speed':
+                    player.speed += 1;
+                    break;
+                case 'health':
+                    player.maxHealth += 20;
+                    player.health += 20;
+                    break;
+            }
+            
+            document.getElementById('levelUpModal').style.display = 'none';
+            upgradeAvailable = false;
+        }
+        
+        // 游戏循环
+        function gameLoop() {
+            if (gameRunning && !upgradeAvailable) {
+                update();
+            }
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // 游戏结束
+        function gameOver() {
+            gameRunning = false;
+            elapsedTime = (Date.now() - startTime) / 1000; // 秒
+            
+            // 显示结算画面
+            document.getElementById('finalCharacter').textContent = currentCharacter.name;
+            document.getElementById('finalLevel').textContent = level;
+            document.getElementById('finalKills').textContent = kills;
+            document.getElementById('finalTime').textContent = `${Math.floor(elapsedTime / 60)}:${Math.floor(elapsedTime % 60).toString().padStart(2, '0')}`;
+            
+            // 检查成就
+            document.getElementById('ach1').className = level >= 5 ? 'achievement-unlocked' : 'achievement-locked';
+            document.getElementById('ach1').textContent = level >= 5 ? '✓ 初级战士: 达到5级' : '✗ 初级战士: 达到5级';
+            
+            document.getElementById('ach2').className = kills >= 100 ? 'achievement-unlocked' : 'achievement-locked';
+            document.getElementById('ach2').textContent = kills >= 100 ? '✓ 杀手: 击败100个敌人' : '✗ 杀手: 击败100个敌人';
+            
+            document.getElementById('ach3').className = elapsedTime >= 600 ? 'achievement-unlocked' : 'achievement-locked';
+            document.getElementById('ach3').textContent = elapsedTime >= 600 ? '✓ 生存专家: 生存10分钟' : '✗ 生存专家: 生存10分钟';
+            
+            document.getElementById('ach4').className = perfectDefense ? 'achievement-unlocked' : 'achievement-locked';
+            document.getElementById('ach4').textContent = perfectDefense ? '✓ 完美防御: 血量始终高于80%' : '✗ 完美防御: 血量始终高于80%';
+            
+            document.getElementById('gameOverScreen').style.display = 'flex';
+        }
+        
+        // 暂停/继续游戏
+        function togglePause() {
+            gamePaused = !gamePaused;
+            pauseButton.textContent = gamePaused ? '▶️' : '⏸️';
+        }
+        
+        // 页面切换函数
+        function showCharacterSelect() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('characterSelect').style.display = 'flex';
+        }
+        
+        function goBackToMain() {
+            document.getElementById('characterSelect').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'flex';
+        }
+        
+        function goToMainMenu() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'flex';
+        }
+        
+        function goToCharacterSelect() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('characterSelect').style.display = 'flex';
+        }
+        
+        function selectCharacter(index) {
+            // 移除之前的选择状态
+            const cards = document.querySelectorAll('.character-card');
+            cards.forEach(card => card.classList.remove('selected'));
+            
+            // 设置新的选择状态
+            cards[index].classList.add('selected');
+            
+            // 更新预览
+            selectedCharacterIndex = index;
+            const char = characters[index];
+            
+            document.getElementById('previewIcon').textContent = char.icon;
+            document.getElementById('previewName').textContent = char.name;
+            document.getElementById('previewDesc').textContent = char.desc;
+            document.getElementById('previewDamage').textContent = char.damage;
+            document.getElementById('previewSpeed').textContent = char.speed;
+            document.getElementById('previewHealth').textContent = char.health;
+            
+            document.getElementById('characterPreview').style.display = 'flex';
+            document.getElementById('confirmSelectionBtn').disabled = false;
+        }
+        
+        function confirmCharacterSelection() {
+            if (selectedCharacterIndex === -1) return;
+            
+            // 应用角色属性
+            const char = characters[selectedCharacterIndex];
+            currentCharacter = char;
+            
+            player = {
+                x: 430,
+                y: 250,
+                radius: 15,
+                health: char.health,
+                maxHealth: char.health,
+                damage: char.damage,
+                speed: char.speed
+            };
+            
+            // 更新游戏界面上的角色显示
+            document.getElementById('gameIcon').textContent = char.icon;
+            document.getElementById('gameName').textContent = char.name;
+            
+            // 进入游戏
+            document.getElementById('characterSelect').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            
+            // 重置游戏状态
+            resetGameState();
+            
+            // 开始游戏
+            gameRunning = true;
+            startTime = Date.now();
+        }
+        
+        function resetGameState() {
+            bullets = [];
+            enemies = [];
+            particles = [];
+            keys = {};
+            level = 1;
+            exp = 0;
+            expToNextLevel = 100;
+            kills = 0;
+            upgradeAvailable = false;
+            gamePaused = false;
+            perfectDefense = true;
+            document.getElementById('levelUpModal').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            pauseButton.textContent = '⏸️';
+            
+            // 重置UI
+            healthFill.style.width = '100%';
+            expFill.style.width = '0%';
+            expText.textContent = '0/100';
+            levelDisplay.textContent = '1';
+            killDisplay.textContent = '0';
+        }
+        
+        function showInstructions() {
+            alert("游戏说明：\n\n• 使用 W/A/S/D 或方向键移动角色\n• 鼠标控制射击方向\n• 击败敌人获得经验值\n• 每升一级可选择属性提升\n• 生命值归零则游戏结束\n\n吸血鬼角色击败敌人后可恢复生命！");
+        }
+        
+        // 初始化游戏
+        window.onload = () => {
+            gameLoop();
+        };
+    </script>
+</body>
+</html>
